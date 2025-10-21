@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using NotikaIdentityEmail.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace NotikaIdentityEmail.Context;
 
-public class EmailContext : DbContext
+public class EmailContext : IdentityDbContext<AppUser>
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
