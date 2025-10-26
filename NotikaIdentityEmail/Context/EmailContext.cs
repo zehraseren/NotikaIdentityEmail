@@ -10,4 +10,7 @@ public class EmailContext : IdentityDbContext<AppUser>
     {
         optionsBuilder.UseSqlServer("Server=Zehra;initial Catalog= NotikaEmailDb;integrated security=true;trust server certificate=true");
     }
+
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Message> Messages { get; set; }
 }
