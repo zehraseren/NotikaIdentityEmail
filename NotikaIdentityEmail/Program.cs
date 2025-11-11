@@ -11,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // DbContext & Identity
 builder.Services.AddDbContext<EmailContext>();
-builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<EmailContext>().AddErrorDescriber<CustomIdentityValidator>();
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<EmailContext>()
+    .AddErrorDescriber<CustomIdentityValidator>()
+    .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
 // JWT Configuration
 builder.Services.Configure<JwtSettingsViewModel>(builder.Configuration.GetSection("JwtSettingsKey"));
