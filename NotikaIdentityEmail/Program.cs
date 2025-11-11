@@ -1,13 +1,40 @@
+using System.Text;
 using NotikaIdentityEmail.Context;
 using NotikaIdentityEmail.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using NotikaIdentityEmail.Models.JwtModels;
 using NotikaIdentityEmail.Models.IdentityModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// DbContext & Identity
 builder.Services.AddDbContext<EmailContext>();
 builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<EmailContext>().AddErrorDescriber<CustomIdentityValidator>();
+
+// JWT Configuration
+builder.Services.Configure<JwtSettingsViewModel>(builder.Configuration.GetSection("JwtSettingsKey"));
+
+// Authentication using Cookies and JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(opt =>
+{
+    var jwtSettings = builder.Configuration.GetSection("JwtSettingsKey").Get<JwtSettingsViewModel>();
+    opt.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+    };
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -24,6 +51,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+// The authentication order matters!
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
