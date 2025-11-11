@@ -2,9 +2,12 @@
 using NotikaIdentityEmail.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using NotikaIdentityEmail.Models.IdentityModels;
 
 namespace NotikaIdentityEmail.Controllers;
+
+[Authorize]
 public class RoleController : Controller
 {
     private readonly RoleManager<IdentityRole> _roleManager;
