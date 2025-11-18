@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using NotikaIdentityEmail.Models.JwtModels;
 using NotikaIdentityEmail.Models.IdentityModels;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +22,14 @@ builder.Services.Configure<JwtSettingsViewModel>(builder.Configuration.GetSectio
 // Authentication using Cookies and JWT
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(opt =>
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.LoginPath = "/Login/UserLogin";
+    options.AccessDeniedPath = "/Error/403";
+})
+    .AddJwtBearer(opt =>
 {
     var jwtSettings = builder.Configuration.GetSection("JwtSettingsKey").Get<JwtSettingsViewModel>();
     opt.TokenValidationParameters = new TokenValidationParameters

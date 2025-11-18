@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NotikaIdentityEmail.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using NotikaIdentityEmail.Models.IdentityModels;
 
 namespace NotikaIdentityEmail.Controllers;
+
+[Authorize]
 public class ProfileController : Controller
 {
     private readonly UserManager<AppUser> _userManager;

@@ -2,6 +2,7 @@
 using NotikaIdentityEmail.Context;
 using NotikaIdentityEmail.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using NotikaIdentityEmail.Models.IdentityModels;
 
 namespace NotikaIdentityEmail.Controllers;
@@ -25,24 +26,30 @@ public class LoginController : Controller
     [HttpPost]
     public async Task<IActionResult> UserLogin(UserLoginViewModel model)
     {
-        var value = _context.Users.Where(u => u.UserName == model.Username).FirstOrDefault();
-        if (value.EmailConfirmed)
+        if (!ModelState.IsValid) return View(model);
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == model.Username);
+
+        if (user == null)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, true);
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Profile", "MyProfile");
-            }
-            else
-            {
-                ModelState.AddModelError("", "Kullanıcı adı veya şifre hatalı!");
-            }
-        }
-        else
-        {
-            ModelState.AddModelError("", "Email hesbaınız onaylanmamıştır, lütfen email aktivasyon işlemini gerçekleştiriniz.");
+            ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı!");
+            return View(model);
         }
 
-        return View();
+        if (!user.EmailConfirmed)
+        {
+            ModelState.AddModelError(string.Empty, "Email hesabınız onaylanmamıştır, lütfen aktivasyon işlemini gerçekleştiriniz.");
+            return View(model);
+        }
+
+        var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, true);
+
+        if (!result.Succeeded)
+        {
+            ModelState.AddModelError(string.Empty, "Kullanıcı adı veya şifre giriniz!");
+            return View(model);
+        }
+
+        return RedirectToAction("EditProfile", "Profile");
     }
 }
