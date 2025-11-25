@@ -1,0 +1,51 @@
+﻿@model List<Notification>
+
+@{
+    int count = 0;
+}
+
+<div role="menu" class="dropdown-menu message-dd notification-dd animated zoomIn">
+    <div class="hd-mg-tt">
+        <h2>Bildirimler</h2>
+    </div>
+
+    <div class="hd-message-info">
+        @foreach (var item in Model)
+        {
+            count++;
+            <a href="javascript:void(0);" onclick="showNotificationDetail('Bildirim @count', '@item.Detail.Replace("'", "\\'")', '@item.ImageUrl')">
+                <div class="hd-message-sn">
+                    <div class="hd-message-img">
+                        <img src="@item.ImageUrl" class="msg-profile-img" alt="" />
+                    </div>
+                    <div class="hd-mg-ctn">
+                        <h3>Bildirim @count</h3>
+                        <p>@item.Detail</p>
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+    <div class="hd-mg-va text-center">
+        <a href="/Notification/NotificationList/">Tümünü Gör</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function showNotificationDetail(title, detail, imageUrl)
+    {
+        Swal.fire ({
+            title: title,
+            text: detail,
+            imageUrl: imageUrl,
+            imageWidth: 70,
+            imageHeight: 70,
+            confirmButtonText: 'Kapat',
+            confirmButtonColor: '#4caf50',
+            background: '#f7f9fc',
+            inco: 'info'
+        });
+    }
+</script>

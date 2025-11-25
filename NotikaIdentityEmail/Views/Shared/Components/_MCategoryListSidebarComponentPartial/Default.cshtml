@@ -2,11 +2,11 @@
 
 <div class="inbox-status">
     <ul class="inbox-st-nav">
-        @foreach (var item in Model)
+        @foreach (var item in ViewBag.messageForCategory)
         {
             <li>
-                <a href="#">
-                    <i class="@item.CategoryIconUrl"></i> @item.CategoryName
+                <a href="/Message/GetMessageListByCategory/@item.CategoryId/">
+                    <i class="@item.CategoryIconUrl"></i> @item.CategoryName <span class="pull-right">@item.MessageCount </span>
                 </a>
             </li>
         }

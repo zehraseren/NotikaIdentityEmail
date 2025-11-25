@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NotikaIdentityEmail.Models.MessageViewModels;
 
 namespace NotikaIdentityEmail.Controllers;
+
 public class MessageController : Controller
 {
     private readonly EmailContext _context;
@@ -95,7 +96,7 @@ public class MessageController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> ComposeMEssage(Message message)
+    public async Task<IActionResult> ComposeMessage(Message message)
     {
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
@@ -107,5 +108,34 @@ public class MessageController : Controller
         _context.SaveChanges();
 
         return RedirectToAction("Sendbox");
+    }
+
+    public async Task<IActionResult> GetMessageListByCategory(int id)
+    {
+        var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+        var values = (from m in _context.Messages
+                      join u in _context.Users
+                      on m.SenderEmail equals u.Email into userGroup
+                      from sender in userGroup.DefaultIfEmpty()
+
+                      join c in _context.Categories
+                      on m.CategoryId equals c.CategoryId into categoryGroup
+                      from Category in categoryGroup.DefaultIfEmpty()
+
+                      where m.ReceiverEmail == user.Email && m.CategoryId == id
+                      select new MessageWithSenderInfoViewModel
+                      {
+                          MessageId = m.MessageId,
+                          MessageDetail = m.MessageDetail,
+                          Subject = m.Subject,
+                          SendDate = m.SendDate,
+                          SenderEmail = m.SenderEmail,
+                          SenderName = sender != null ? sender.Name : "Bilinmeyen",
+                          SenderSurname = sender != null ? sender.Surname : "Kullanıcı",
+                          CategoryName = Category != null ? Category.CategoryName : "Kategori Yok"
+                      }).ToList();
+
+        return View(values);
     }
 }
