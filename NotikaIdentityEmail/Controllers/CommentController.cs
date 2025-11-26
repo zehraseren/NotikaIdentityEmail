@@ -44,9 +44,48 @@ public class CommentController : Controller
 
         comment.AppUserId = user.Id;
         comment.CommentDate = DateTime.Now;
-        comment.CommentStatus = "Onay Bekliyor";
 
         _context.Comments.Add(comment);
+        _context.SaveChanges();
+
+        return RedirectToAction("UserCommentList");
+    }
+
+    public IActionResult DeleteComment(int id)
+    {
+        var comment = _context.Comments.Find(id);
+
+        _context.Comments.Remove(comment);
+        _context.SaveChanges();
+
+        return RedirectToAction("UserCommentList");
+    }
+
+    public IActionResult CommentStatusChangeToToxic(int id)
+    {
+        var comment = _context.Comments.Find(id);
+        
+        comment.CommentStatus = "Toksik Yorum";
+        _context.SaveChanges();
+
+        return RedirectToAction("UserCommentList");
+    }
+
+    public IActionResult CommentStatusChangeToPassive(int id)
+    {
+        var comment = _context.Comments.Find(id);
+
+        comment.CommentStatus = "Yorum Kaldırıldı";
+        _context.SaveChanges();
+
+        return RedirectToAction("UserCommentList");
+    }
+
+    public IActionResult CommentStatusChangeToActive(int id)
+    {
+        var comment = _context.Comments.Find(id);
+
+        comment.CommentStatus = "Yorum Onaylandı";
         _context.SaveChanges();
 
         return RedirectToAction("UserCommentList");

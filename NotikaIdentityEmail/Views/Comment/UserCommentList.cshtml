@@ -23,6 +23,7 @@
                                 <th>Yorum</th>
                                 <th>Durumu</th>
                                 <th>Sil</th>
+                                <th>Toksik</th>
                                 <th>Pasif Yap</th>
                                 <th>Yorumu Onayla</th>
                             </tr>
@@ -38,10 +39,13 @@
                                         <a href="/Comment/DeleteComment/@item.CommentId/" class="btn btn-danger">Sil</a>
                                     </td>
                                     <td>
-                                        <a href="/Comment/UpdateComment/@item.CommentId/" class="btn btn-primary">Pasif Yap</a>
+                                        <a href="/Comment/CommentStatusChangeToToxic/@item.CommentId/" class="btn btn-primary">Toksik</a>
                                     </td>
                                     <td>
-                                        <a href="/Comment/UpdateComment/@item.CommentId/" class="btn btn-success">Yorumu Onayla</a>
+                                        <a href="/Comment/CommentStatusChangeToPassive/@item.CommentId/" class="btn btn-primary">Pasif Yap</a>
+                                    </td>
+                                    <td>
+                                        <a href="/Comment/CommentStatusChangeToActive/@item.CommentId/" class="btn btn-success">Yorumu Onayla</a>
                                     </td>
                                 </tr>
                             }
