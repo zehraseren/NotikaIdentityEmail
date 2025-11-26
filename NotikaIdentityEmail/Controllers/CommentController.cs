@@ -3,6 +3,7 @@ using NotikaIdentityEmail.Context;
 using NotikaIdentityEmail.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NotikaIdentityEmail.Controllers;
 
@@ -24,6 +25,7 @@ public class CommentController : Controller
         return View(userComments);
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult UserCommentList()
     {
         var commentList = _context.Comments.Include(u => u.AppUser).ToList();
@@ -64,7 +66,7 @@ public class CommentController : Controller
     public IActionResult CommentStatusChangeToToxic(int id)
     {
         var comment = _context.Comments.Find(id);
-        
+
         comment.CommentStatus = "Toksik Yorum";
         _context.SaveChanges();
 

@@ -46,7 +46,7 @@ public class LoginController : Controller
 
         if (!result.Succeeded)
         {
-            ModelState.AddModelError(string.Empty, "Kullanıcı adı veya şifre giriniz!");
+            ModelState.AddModelError(string.Empty, "Doğru kullanıcı adı veya şifre giriniz!");
             return View(model);
         }
 
