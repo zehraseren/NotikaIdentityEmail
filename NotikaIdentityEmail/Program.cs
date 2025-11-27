@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using NotikaIdentityEmail.Models.JwtModels;
 using NotikaIdentityEmail.Models.IdentityModels;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +30,7 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Login/UserLogin";
     options.AccessDeniedPath = "/Error/403";
 })
-    .AddJwtBearer(opt =>
+.AddJwtBearer(opt =>
 {
     var jwtSettings = builder.Configuration.GetSection("JwtSettingsKey").Get<JwtSettingsViewModel>();
     opt.TokenValidationParameters = new TokenValidationParameters
@@ -42,6 +43,13 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
     };
+})
+// Google Authentication Configuration
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    options.ClientId = "Authentication:Google:ClientId";
+    options.ClientSecret = "Authentication:Google:ClientSecret";
+    options.CallbackPath = "/signin-google"; // Optional: specify a custom callback path
 });
 
 builder.Services.AddControllersWithViews();
@@ -71,6 +79,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
